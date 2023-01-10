@@ -3,24 +3,25 @@
   height: auto;
   display: flex;
   align-items: center;
-  margin-left: 80px;
   flex-direction: column;
 
-  .h1,
   h1 {
     font-weight: 900;
     color: #fea150;
     margin-bottom: 50px;
   }
-  .h2,
   h2 {
-    font-size: 30px;
-    font-weight: bold;
+    font-size: 20px;
     margin-bottom: 20px;
+    line-height: 2;
   }
-  .h3,
   h3 {
     font-size: 20px;
     line-height: 2;
+  }
+
+  .about-row {
+    width: 100%;
+    margin-bottom: 50px;
   }
 }

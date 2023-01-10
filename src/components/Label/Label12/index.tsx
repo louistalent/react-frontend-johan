@@ -69,7 +69,7 @@ const Label12 = ({
         src={label}
         width={146}
         height={146}
-        alt="upload"
+        alt="upload image"
         style={{ margin: "2px 0px 2px 2px", maxWidth: "100%" }}
       />
 
@@ -225,7 +225,7 @@ export const BigLabel12 = ({
         src={label}
         width={376}
         height={376}
-        alt="upload"
+        alt="upload image"
         style={{ margin: "2px 0px 2px 0px", maxWidth: "100%" }}
       />
       <div className="label-image1">
@@ -235,7 +235,7 @@ export const BigLabel12 = ({
               src={file}
               width={376}
               height={376}
-              alt="upload"
+              alt="upload image"
               className="noDrag"
               style={{ position: "absolute" }}
             />

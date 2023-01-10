@@ -67,7 +67,7 @@ const Label19 = ({
         src={label}
         width={146}
         height={146}
-        alt="upload"
+        alt="upload image"
         style={{ margin: "2px auto", maxWidth: "100%" }}
       />
       <div
@@ -221,7 +221,7 @@ export const BigLabel19 = ({
         src={label}
         width={376}
         height={376}
-        alt="upload"
+        alt="upload image"
         style={{ margin: "2px auto", maxWidth: "100%" }}
       />
       <div

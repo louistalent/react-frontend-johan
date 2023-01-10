@@ -102,6 +102,8 @@ import ListItemText from "@mui/material/ListItemText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
 import { blue } from "@mui/material/colors";
+import axios from "axios";
+const appUrl = "https://stripe-server-johan-production.up.railway.app"; // process.env.REACT_APP_API_URL || ""; "http://localhost:8080";
 
 export interface SimpleDialogProps {
   open: boolean;
@@ -119,7 +121,7 @@ function SimpleDialog(props: SimpleDialogProps) {
 
   return (
     <Dialog onClose={handleClose} open={open}>
-      <div style={{ height: "380px" }}>
+      <div className="height-380">
         {G.curLabel === 0 ? (
           <SBigLabel1
             bottleName={G && G.bottleName}
@@ -500,6 +502,11 @@ const Editor = () => {
 
   const [selectedValue, setSelectedValue] = React.useState("a");
   const [zoom, setZoom] = React.useState(false);
+  const [vat, setVAT] = useState(0.0);
+  const [rate, setRate] = useState(0.2);
+  const [price, setPrice]: any = useState(100.0);
+
+  const blackLabels = [14, 20, 23];
 
   useEffect(() => {
     setColor(G && G.color);
@@ -514,8 +521,28 @@ const Editor = () => {
     if (G.file !== "") {
       setFile(G && G.file);
     }
+    getTaxRates(G.country_code);
+    if (G.lang == "sw-SW") update({ currency: "SEK" });
+    else update({ currency: "EUR" });
     // console.log("G.file", G.file);
   }, []);
+
+  const getTaxRates = async (country_code: string) => {
+    const data = {
+      country_code: country_code,
+    };
+    console.log(data);
+    try {
+      const result = await axios.post(`${appUrl}/taxrates`, { data });
+      if (result.data) {
+        setRate(result.data.rate);
+        console.log(result.data.rate);
+        update({ vat: result.data.rate });
+      } else {
+        console.log("ERROR!");
+      }
+    } catch (error) {}
+  };
 
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedValue(event.target.value);
@@ -639,7 +666,7 @@ const Editor = () => {
     let tmp = G && G.curLabel;
     tmp -= 1;
     if (tmp === 0) tmp = 30;
-    if (tmp == 23) tmp = 22;
+    if (blackLabels.includes(tmp)) tmp--;
     update({
       curLabel: tmp,
     });
@@ -648,7 +675,7 @@ const Editor = () => {
     let tmp = G && G.curLabel;
     tmp += 1;
     if (tmp === 31) tmp = 1;
-    if (tmp == 23) tmp = 24;
+    if (blackLabels.includes(tmp)) tmp++;
     update({
       curLabel: tmp,
     });
@@ -663,18 +690,11 @@ const Editor = () => {
       />
       <div className="container">
         <div className="row">
-          <div
-            className="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-xs-12"
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              textAlign: "left",
-            }}
-          >
+          <div className="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-xs-12 edit-div">
             <h1 className="gradient-h1">{T("home.header")}</h1>
-            <span className="h2">{T("home.content")}</span>
-            <Row style={{ marginTop: "20px" }}>
-              <span className="h4">{T("home.side")}</span>
+            <h2>{T("home.content")}</h2>
+            <Row className="row-mt-20">
+              <h3>{T("home.side")}</h3>
               <FormControl>
                 <RadioGroup
                   row
@@ -691,15 +711,7 @@ const Editor = () => {
                       },
                     }}
                   />
-                  <p
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      margin: "0 3px",
-                    }}
-                  >
-                    {T("home.front")}
-                  </p>
+                  <p className="edit-text">{T("home.front")}</p>
                   {/* <Radio
                     {...controlProps("b")}
                     sx={{
@@ -721,9 +733,9 @@ const Editor = () => {
                 </RadioGroup>
               </FormControl>
             </Row>
-            <Row style={{ marginTop: "20px" }}>
+            <Row className="row-mt-20">
               <Col className="col-6">
-                <span className="h4"> {T("home.bottlename")}</span>
+                <h3>{T("home.bottlename")}</h3>
                 <input
                   type="text"
                   onChange={updateBottleName}
@@ -731,7 +743,7 @@ const Editor = () => {
                 />
               </Col>
               <Col className="col-6">
-                <span className="h4">{T("home.bottletype")}</span>
+                <h3>{T("home.bottletype")}</h3>
                 <input
                   type="text"
                   name="site_name"
@@ -741,24 +753,24 @@ const Editor = () => {
               </Col>
             </Row>
 
-            <Row style={{ marginTop: "20px" }}>
+            <Row className="row-mt-20">
               <Col className="col-12">
-                <span className="h4">{T("home.tagline")}</span>
+                <h3>{T("home.tagline")}</h3>
                 <input type="text" onChange={updateTagLine} value={tagLine} />
               </Col>
             </Row>
 
-            <Row style={{ marginTop: "20px" }}>
+            <Row className="row-mt-20">
               <Col className="col-3">
-                <span className="h4">{T("home.acl")}</span>
+                <h3>{T("home.acl")}</h3>
                 <input type="text" value={vol} onChange={updateVol} />
               </Col>
               <Col className="col-3">
-                <span className="h4">{T("home.vol")}</span>
+                <h3>{T("home.vol")}</h3>
                 <input type="text" value={cl} onChange={updateCl} />
               </Col>
               <Col className="col-6">
-                <span className="h4">{T("home.date")}</span>
+                <h3>{T("home.date")}</h3>
                 <DatePicker
                   bordered={false}
                   onChange={(e) => setDate(String(e?.format("YYYY/MM/DD")))}
@@ -766,19 +778,9 @@ const Editor = () => {
               </Col>
             </Row>
 
-            <Row style={{ marginTop: "20px" }}>
-              <span className="h4" style={{ marginBottom: "15px" }}>
-                {T("home.color")}
-              </span>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  // background: "#000000",
-                  borderRadius: "10px",
-                }}
-              >
+            <Row className="row-mt-20">
+              <h3>{T("home.color")}</h3>
+              <div className="color-box">
                 <CirclePicker
                   width="100%"
                   circleSize={14}
@@ -799,13 +801,7 @@ const Editor = () => {
                   ]}
                   onChange={onColorChange}
                 />
-                <button
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    padding: "0 5px",
-                  }}
-                >
+                <button className="color-picker-btn">
                   {/* <SettingsOutlinedIcon
                     sx={{ fontSize: "18px", color: "#354832" }}
                   ></SettingsOutlinedIcon> */}
@@ -813,38 +809,14 @@ const Editor = () => {
                     type="color"
                     value={color}
                     onChange={(e) => setNewColor(e.target.value)}
-                    style={{
-                      width: "25px",
-                      height: "25px",
-                      padding: "5px 5px",
-                    }}
+                    className="color-picker-input"
                   ></input>{" "}
                 </button>
               </div>
             </Row>
-            <Row
-              style={{
-                marginTop: "40px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
+            <Row>
               <Col className="col-6">
-                <button
-                  style={{
-                    width: "100%",
-                    fontSize: "14px",
-                    fontWeight: "900",
-                    padding: "15px 25px",
-                    color: "white",
-                    backgroundColor: "#FEA150",
-                    border: "none",
-                    borderRadius: "50px",
-                    textDecoration: "none",
-                  }}
-                  onClick={toOrderPage}
-                >
+                <button className="buy-sticker-btn" onClick={toOrderPage}>
                   {T("home.button")}
                 </button>
               </Col>
@@ -852,65 +824,21 @@ const Editor = () => {
               <Col className="col-6"></Col>
             </Row>
           </div>
-          <div
-            className="col-xl-8 col-lg-12 col-md-12 col-sm-12 col-xs-12"
-            style={{
-              display: "flex",
-              justifyContent: "end",
-              alignItems: "center",
-              flexDirection: "row",
-            }}
-          >
-            <div
-              className="col-4"
-              style={{ height: "100%", textAlign: "right" }}
-            >
-              <div style={{ width: "100%", height: "60%" }}></div>
-
-              <button
-                style={{
-                  borderRadius: "30px",
-                  width: "50px",
-                  height: "50px",
-                  backgroundColor: "#FFFFFF",
-                  color: "#FEA150",
-                  borderColor: "#FEA150",
-                  border: "2px",
-                  boxShadow: "0 0 0 5px #55555550",
-                }}
-                onClick={leftLabel}
-              >
+          <div className="col-xl-8 col-lg-12 col-md-12 col-sm-12 col-xs-12 edit-left">
+            <div className="col-4 edit-1">
+              <div className="height-60"></div>
+              <button className="left-arrow-btn" onClick={leftLabel}>
                 <WestIcon />
               </button>
             </div>
             <div className="col-4 bottle-div">
               <div className="bottle">
-                <div
-                  style={{
-                    width: "100%",
-                    height: "55%",
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    alignItems: "end",
-                  }}
-                >
-                  <button
-                    style={{
-                      borderRadius: "30px",
-                      width: "50px",
-                      height: "50px",
-                      backgroundColor: "#FFFFFF",
-                      color: "#FEA150",
-                      borderColor: "#FEA150",
-                      border: "2px",
-                      boxShadow: "0 0 0 5px #55555550",
-                    }}
-                    onClick={zoomIn}
-                  >
+                <div className="height-55">
+                  <button className="zoom-btn" onClick={zoomIn}>
                     <ZoomInIcon />
                   </button>
                 </div>
-                <div ref={printRef} style={{ height: "150px" }}>
+                <div ref={printRef} className="height-150">
                   {G.curLabel === 0 ? (
                     <SLabel1
                       bottleName={bottleName}
@@ -1260,7 +1188,7 @@ const Editor = () => {
                 <Button
                   variant="contained"
                   component="label"
-                  style={{ backgroundColor: "#ff3333", marginTop: "10px" }}
+                  className="upload-btn"
                 >
                   {T("home.upload")}
                   <input
@@ -1272,25 +1200,10 @@ const Editor = () => {
                 </Button>
               )}
             </div>
-            <div
-              className="col-4"
-              style={{ height: "100%", textAlign: "left" }}
-            >
-              <div style={{ width: "100%", height: "60%" }}></div>
+            <div className="col-4 edit-right">
+              <div className="height-60"></div>
 
-              <button
-                style={{
-                  borderRadius: "30px",
-                  width: "50px",
-                  height: "50px",
-                  backgroundColor: "#FFFFFF",
-                  color: "#FEA150",
-                  borderColor: "#FEA150",
-                  border: "2px",
-                  boxShadow: "0 0 0 5px #55555550",
-                }}
-                onClick={rightLabel}
-              >
+              <button className="right-arrow-btn" onClick={rightLabel}>
                 <EastIcon />
               </button>
             </div>

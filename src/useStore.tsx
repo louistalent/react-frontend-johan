@@ -70,6 +70,7 @@ declare interface StoreObject {
   size: string;
   count: number;
   paid: number;
+  vat: number;
 
   //personal info
   firstname: string;
@@ -83,6 +84,7 @@ declare interface StoreObject {
   street: string;
   zipcode: string;
   country_code: string;
+  currency: string;
 
   //payment info
   payment: string;
@@ -150,6 +152,7 @@ const initialState: StoreObject = {
   size: "small",
   count: 10,
   paid: 16.8,
+  vat: 0.2,
 
   // contact info
   firstname: "",
@@ -163,6 +166,7 @@ const initialState: StoreObject = {
   zipcode: "",
   street: "",
   country_code: "",
+  currency: "EUR",
 
   //payment info
   payment: "Credit Card",

@@ -68,7 +68,7 @@ const Label13 = ({
         src={label}
         width={146}
         height={146}
-        alt="upload"
+        alt="upload image"
         style={{ margin: "2px 0px 2px 2px", maxWidth: "100%" }}
       />
 
@@ -221,7 +221,7 @@ export const BigLabel13 = ({
         src={label}
         width={376}
         height={376}
-        alt="upload"
+        alt="upload image"
         style={{ margin: "2px 0px 2px 0px", maxWidth: "100%" }}
       />
       <div className="label-text" style={{ width: "380px", height: "380px" }}>
